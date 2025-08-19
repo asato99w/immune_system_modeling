@@ -42,6 +42,7 @@ class DendriticCell:
         self._state = DendriticCellState.RESTING
         self._recognized_patterns = []
         self._environment = None  # 所属する環境
+        self._mhc_peptide_complexes = []  # MHC-ペプチド複合体のリスト
         
         # PAMPs認識能力（InnateImmuneSystemと同様）
         self._known_pamps = {
@@ -204,3 +205,58 @@ class DendriticCell:
     def is_primed(self) -> bool:
         """準備状態を返す"""
         return self._state == DendriticCellState.PRIMED
+    
+    def phagocytose(self, antigen: Antigen):
+        """
+        貪食により抗原を取り込み、MHC-ペプチド複合体を生成
+        
+        Args:
+            antigen: 貪食する抗原
+        """
+        if not antigen or not antigen.molecular_signature:
+            return
+        
+        # 抗原をペプチドに処理
+        peptides = self._process_antigen_to_peptides(antigen)
+        
+        # MHCクラスII（細胞外抗原用）にペプチドを載せる
+        for peptide in peptides:
+            mhc_peptide_complex = ("MHC-II", peptide)
+            self._mhc_peptide_complexes.append(mhc_peptide_complex)
+    
+    def _process_antigen_to_peptides(self, antigen: Antigen) -> list:
+        """
+        抗原をペプチドに処理（簡略化）
+        
+        Returns:
+            生成されたペプチドのリスト
+        """
+        peptides = []
+        
+        # 分子シグネチャに基づいてペプチドを生成
+        if isinstance(antigen.molecular_signature, str):
+            if antigen.molecular_signature == "dsRNA":
+                peptides.append("viral_peptide_1")
+            elif antigen.molecular_signature == "LPS":
+                peptides.append("bacterial_peptide_1")
+            elif antigen.molecular_signature == "flagellin":
+                peptides.append("bacterial_peptide_2")
+        elif isinstance(antigen.molecular_signature, list):
+            for sig in antigen.molecular_signature:
+                if sig == "dsRNA":
+                    peptides.append("viral_peptide_1")
+                elif sig == "LPS":
+                    peptides.append("bacterial_peptide_1")
+                elif sig == "flagellin":
+                    peptides.append("bacterial_peptide_2")
+        
+        return peptides
+    
+    def get_mhc_peptide_complexes(self) -> list:
+        """
+        現在提示しているMHC-ペプチド複合体のリストを返す
+        
+        Returns:
+            (MHCタイプ, ペプチド)のタプルのリスト
+        """
+        return self._mhc_peptide_complexes.copy()
