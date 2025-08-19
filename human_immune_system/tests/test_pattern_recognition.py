@@ -1,12 +1,14 @@
 import unittest
 from ..model import Antigen, AntigenType, InnateImmuneSystem
+from ..model.cytokine_environment import CytokineEnvironment
 
 
 class TestPatternRecognition(unittest.TestCase):
     """統合されたパターン認識テスト"""
     
     def setUp(self):
-        self.innate_system = InnateImmuneSystem()
+        self.cytokine_env = CytokineEnvironment()
+        self.innate_system = InnateImmuneSystem(self.cytokine_env)
     
     def test_recognizes_bacterial_lps(self):
         """細菌のLPSパターンを認識"""
@@ -46,8 +48,8 @@ class TestPatternRecognition(unittest.TestCase):
             molecular_signature="unknown_molecule"
         )
         
-        # 未知のシグネチャでもタイプベースで認識される（後方互換性）
-        self.assertTrue(self.innate_system.recognize_pattern(unknown_antigen))
+        # 未知の分子パターンは認識されない（生物学的に正確）
+        self.assertFalse(self.innate_system.recognize_pattern(unknown_antigen))
     
     def test_self_antigen_not_recognized(self):
         """自己抗原は認識されない"""
@@ -59,16 +61,17 @@ class TestPatternRecognition(unittest.TestCase):
         
         self.assertFalse(self.innate_system.recognize_pattern(self_antigen))
     
-    def test_antigen_without_signature_uses_type_based_recognition(self):
-        """シグネチャなしの抗原はタイプベース認識"""
+    def test_antigen_without_signature_not_recognized(self):
+        """分子シグネチャなしの抗原は認識されない"""
         viral_antigen = Antigen(antigen_type=AntigenType.VIRAL, concentration=25.0)
         self_antigen = Antigen(antigen_type=AntigenType.SELF, concentration=25.0)
         
-        self.assertTrue(self.innate_system.recognize_pattern(viral_antigen))
+        # 分子パターンがなければ認識できない（生物学的に正確）
+        self.assertFalse(self.innate_system.recognize_pattern(viral_antigen))
         self.assertFalse(self.innate_system.recognize_pattern(self_antigen))
     
-    def test_known_pamps_method(self):
-        """既知のPAMPs認識メソッドの直接テスト"""
+    def test_known_vs_unknown_pamps(self):
+        """既知と未知のPAMPsの認識の違い"""
         lps_antigen = Antigen(
             antigen_type=AntigenType.BACTERIAL,
             molecular_signature="LPS"
@@ -78,8 +81,9 @@ class TestPatternRecognition(unittest.TestCase):
             molecular_signature="unknown"
         )
         
-        self.assertTrue(self.innate_system.recognize_known_pamps(lps_antigen))
-        self.assertFalse(self.innate_system.recognize_known_pamps(unknown_antigen))
+        # 公開APIを通じてテスト
+        self.assertTrue(self.innate_system.recognize_pattern(lps_antigen))
+        self.assertFalse(self.innate_system.recognize_pattern(unknown_antigen))
 
 
 if __name__ == '__main__':

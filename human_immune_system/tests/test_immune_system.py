@@ -47,13 +47,45 @@ class TestImmuneSystem(unittest.TestCase):
             molecular_signature="LPS"
         )
         
-        # 自然免疫系がパターンを認識すれば免疫系も活性化
-        pattern_recognized = self.immune_system.innate_system.recognize_pattern(bacterial_antigen)
-        
+        # パターン認識により免疫系が活性化
         self.immune_system.antigen_exposure(bacterial_antigen)
-        
-        self.assertTrue(pattern_recognized)
         self.assertTrue(self.immune_system.is_activated())
+        
+        # 未知のパターンでは活性化しない
+        unknown_antigen = Antigen(
+            antigen_type=AntigenType.BACTERIAL,
+            molecular_signature="unknown"
+        )
+        
+        immune_system2 = ImmuneSystem()
+        immune_system2.antigen_exposure(unknown_antigen)
+        self.assertFalse(immune_system2.is_activated())
+    
+    def test_immune_system_with_dendritic_cells(self):
+        """免疫系に樹状細胞を追加した統合テスト"""
+        from ..model.dendritic_cell import DendriticCell
+        
+        # 樹状細胞を追加
+        dc1 = DendriticCell()
+        dc2 = DendriticCell()
+        innate_system = self.immune_system.get_innate_system()
+        innate_system.add_dendritic_cell(dc1)
+        innate_system.add_dendritic_cell(dc2)
+        
+        # 病原体による暴露
+        pathogen = Antigen(
+            antigen_type=AntigenType.BACTERIAL,
+            concentration=60.0,
+            molecular_signature="LPS"
+        )
+        
+        self.immune_system.antigen_exposure(pathogen)
+        
+        # 統合状態の確認
+        self.assertTrue(self.immune_system.is_activated())
+        status = innate_system.get_immune_status()
+        self.assertTrue(status["system_activated"])
+        self.assertGreater(status["active_dcs"], 0)
 
 
 if __name__ == '__main__':
