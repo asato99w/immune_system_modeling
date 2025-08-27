@@ -1,7 +1,7 @@
 import unittest
-from ..model import Antigen, AntigenType
-from ..model.dendritic_cell import DendriticCell
-from ..model.cytokine_environment import CytokineEnvironment
+from ....model import Antigen, AntigenType
+from ....model.dendritic_cell import DendriticCell
+from ....model.cytokine_environment import CytokineEnvironment
 
 
 class TestDendriticCellBehaviorChanges(unittest.TestCase):

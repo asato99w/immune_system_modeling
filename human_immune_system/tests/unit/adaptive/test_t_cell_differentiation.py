@@ -1,8 +1,8 @@
 import unittest
-from ..model.t_cell import TCell
-from ..model.cytokine_environment import CytokineEnvironment
-from ..model.dendritic_cell import DendriticCell
-from ..model import Antigen, AntigenType
+from ....model.t_cell import TCell
+from ....model.cytokine_environment import CytokineEnvironment
+from ....model.dendritic_cell import DendriticCell
+from ....model import Antigen, AntigenType
 
 
 class TestTCellDifferentiation(unittest.TestCase):

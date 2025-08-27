@@ -1,8 +1,8 @@
 import unittest
-from ..model import Antigen, AntigenType
-from ..model.innate_immune_system import InnateImmuneSystem
-from ..model.dendritic_cell import DendriticCell
-from ..model.cytokine_environment import CytokineEnvironment
+from ...model import Antigen, AntigenType
+from ...model.innate_immune_system import InnateImmuneSystem
+from ...model.dendritic_cell import DendriticCell
+from ...model.cytokine_environment import CytokineEnvironment
 
 
 class TestInnateImmuneIntegration(unittest.TestCase):

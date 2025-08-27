@@ -1,6 +1,6 @@
 import unittest
-from ..model import Antigen, AntigenType, InnateImmuneSystem
-from ..model.cytokine_environment import CytokineEnvironment
+from ....model import Antigen, AntigenType, InnateImmuneSystem
+from ....model.cytokine_environment import CytokineEnvironment
 
 
 class TestPatternRecognition(unittest.TestCase):

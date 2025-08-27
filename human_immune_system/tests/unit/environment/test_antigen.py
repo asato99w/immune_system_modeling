@@ -1,5 +1,5 @@
 import unittest
-from ..model import Antigen, AntigenType
+from ....model import Antigen, AntigenType
 
 
 class TestAntigen(unittest.TestCase):

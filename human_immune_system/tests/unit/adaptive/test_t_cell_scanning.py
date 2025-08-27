@@ -1,7 +1,7 @@
 import unittest
-from ..model import Antigen, AntigenType
-from ..model.dendritic_cell import DendriticCell
-from ..model.t_cell import TCell
+from ....model import Antigen, AntigenType
+from ....model.dendritic_cell import DendriticCell
+from ....model.t_cell import TCell
 
 
 class TestTCellScanning(unittest.TestCase):

@@ -1,5 +1,5 @@
 import unittest
-from ..model.cytokine_environment import CytokineEnvironment
+from ....model.cytokine_environment import CytokineEnvironment
 
 
 class MockCell:

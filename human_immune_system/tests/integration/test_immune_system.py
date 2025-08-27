@@ -1,5 +1,5 @@
 import unittest
-from ..model import ImmuneSystem, Antigen, AntigenType
+from ...model import ImmuneSystem, Antigen, AntigenType
 
 
 class TestImmuneSystem(unittest.TestCase):
@@ -63,7 +63,7 @@ class TestImmuneSystem(unittest.TestCase):
     
     def test_immune_system_with_dendritic_cells(self):
         """免疫系に樹状細胞を追加した統合テスト"""
-        from ..model.dendritic_cell import DendriticCell
+        from ...model.dendritic_cell import DendriticCell
         
         # 樹状細胞を追加
         dc1 = DendriticCell()

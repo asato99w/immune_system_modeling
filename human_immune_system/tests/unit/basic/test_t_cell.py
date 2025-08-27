@@ -1,5 +1,5 @@
 import unittest
-from ..model.t_cell import TCell
+from ....model.t_cell import TCell
 
 
 class TestTCellMinimal(unittest.TestCase):
