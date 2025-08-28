@@ -1,3 +1,9 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .antigen_presenting_cell import AntigenPresentingCell
+
+
 class TCell:
     """
     T細胞：獲得免疫の中心的細胞
@@ -51,9 +57,55 @@ class TCell:
         
         return False
     
+    def scan_apc(self, apc: 'AntigenPresentingCell') -> bool:
+        """
+        抗原提示細胞（APC）のMHC-ペプチド複合体をスキャンして認識を試みる
+        共刺激シグナルも考慮して活性化を決定
+        
+        Args:
+            apc: スキャン対象のAPC（樹状細胞、マクロファージなど）
+            
+        Returns:
+            特異的複合体を認識して活性化したかどうか
+        """
+        if not self._specificity:
+            return False
+        
+        # すでに活性化済みの場合は再活性化しない
+        if self._activated:
+            return False
+        
+        # APCが提示している複合体をスキャン
+        complexes = apc.get_mhc_peptide_complexes()
+        
+        # 特異的複合体を探す
+        found_match = False
+        for complex in complexes:
+            if complex == self._specificity:
+                found_match = True
+                break
+        
+        if not found_match:
+            return False
+        
+        # 共刺激シグナルを確認（Signal 2）
+        costim_signals = apc.get_costimulatory_signals()
+        cd80_level = costim_signals.get("CD80", 0)
+        cd86_level = costim_signals.get("CD86", 0)
+        
+        # 共刺激シグナルが十分な場合のみ活性化
+        # CD80またはCD86が閾値（0.3）以上必要
+        if cd80_level >= 0.3 or cd86_level >= 0.3:
+            self.activate()
+            return True
+        
+        return False
+    
     def enter_environment(self, environment):
         """環境に参加"""
         self._environment = environment
+        # オブザーバーとして登録
+        environment.register_cell(self)
     
     def get_differentiation_type(self):
         """分化タイプを返す"""
